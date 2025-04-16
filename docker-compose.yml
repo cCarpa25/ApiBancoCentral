@@ -1,8 +1,8 @@
-
 services:
   postgres:
-    image: postgres:14
-    restart: always
+    image: postgres:17
+    container_name: minibanco-db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: senha123
@@ -10,19 +10,13 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./sql:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - openfinance_network
 
-  api:
-    build: .
-    restart: always
-    environment:
-      DB_HOST: postgres
-      DB_USER: postgres
-      DB_PASSWORD: senha123
-      DB_NAME: minibanco
-      DB_PORT: 5432
-      PORT: 3000
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
+volumes:
+  postgres_data:
+
+networks:
+  openfinance_network:
+    driver: bridge

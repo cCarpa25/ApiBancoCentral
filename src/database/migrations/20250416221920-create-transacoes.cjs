@@ -1,36 +1,32 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('transacoes', {
+    await queryInterface.createTable("transacoes", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      conta_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: 'contas', key: 'id' },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-      },
       tipo: {
-        type: Sequelize.ENUM('credito', 'debito'),
+        type: Sequelize.ENUM("credito", "debito"),
         allowNull: false,
       },
       valor: {
-        type: Sequelize.DECIMAL(10, 2),
+        type: Sequelize.DECIMAL,
         allowNull: false,
       },
       descricao: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      data: {
-        type: Sequelize.DATE,
+      conta_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: { model: "contas", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       created_at: {
         type: Sequelize.DATE,
@@ -43,7 +39,11 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface) => {
-    await queryInterface.dropTable('transacoes');
+  down: async (queryInterface, Sequelize) => {
+    // Remover o ENUM manualmente para evitar erro ao refazer migrations
+    await queryInterface.dropTable("transacoes");
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_transacoes_tipo";'
+    );
   },
 };

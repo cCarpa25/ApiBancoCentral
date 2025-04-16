@@ -2,14 +2,18 @@
   "name": "minibanco-central",
   "version": "1.0.0",
   "description": "API Agregadora de Contas Bancárias (Mini Banco Central)",
+  "type": "module",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app.js"
+    "dev": "nodemon node src/app.js"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "pg": "^8.9.0",
-    "sequelize": "^6.32.1",
-    "dotenv": "^16.3.1"
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }

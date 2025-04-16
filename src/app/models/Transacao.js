@@ -1,17 +1,16 @@
-import { Model, DataTypes } from 'sequelize';
+import Sequelize, { Model } from "sequelize";
 
 class Transacao extends Model {
   static init(sequelize) {
     super.init(
       {
-        tipo: DataTypes.ENUM('credito', 'debito'),
-        valor: DataTypes.DECIMAL,
-        descricao: DataTypes.STRING,
-        data: DataTypes.DATE,
+        tipo: Sequelize.ENUM("credito", "debito"),
+        valor: Sequelize.DECIMAL,
+        description: Sequelize.STRING,
       },
       {
         sequelize,
-        tableName: 'transacoes',
+        tableName: "transacoes",
       }
     );
 
@@ -19,7 +18,10 @@ class Transacao extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Conta, { foreignKey: 'conta_id', as: 'conta' });
+    this.belongsTo(models.Conta, {
+      foreignKey: "conta_id",
+      as: "conta",
+    });
   }
 }
 

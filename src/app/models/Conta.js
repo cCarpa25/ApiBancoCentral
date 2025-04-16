@@ -1,14 +1,24 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes } from "sequelize";
 
 class Conta extends Model {
   static init(sequelize) {
     super.init(
       {
-        saldo: DataTypes.DECIMAL,
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        saldo: {
+          type: DataTypes.DECIMAL,
+          allowNull: false,
+          defaultValue: 0,
+        },
       },
       {
         sequelize,
-        tableName: 'contas',
+        tableName: "contas",
+        modelName: "Conta",
       }
     );
 
@@ -16,9 +26,20 @@ class Conta extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.User, { foreignKey: 'usuario_id', as: 'usuario' });
-    this.belongsTo(models.Instituicao, { foreignKey: 'instituicao_id', as: 'instituicao' });
-    this.hasMany(models.Transacao, { foreignKey: 'conta_id', as: 'transacoes' });
+    this.belongsTo(models.User, {
+      foreignKey: "usuario_id",
+      as: "usuario",
+    });
+
+    this.belongsTo(models.Instituicao, {
+      foreignKey: "instituicao_id",
+      as: "instituicao",
+    });
+
+    this.hasMany(models.Transacao, {
+      foreignKey: "conta_id",
+      as: "transacoes",
+    });
   }
 }
 

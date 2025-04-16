@@ -1,14 +1,14 @@
-import { Model, DataTypes } from 'sequelize';
+import Sequelize, { Model } from "sequelize";
 
 class Instituicao extends Model {
   static init(sequelize) {
     super.init(
       {
-        nome: DataTypes.STRING,
+        nome: Sequelize.STRING,
       },
       {
         sequelize,
-        tableName: 'instituicoes',
+        tableName: "instituicoes",
       }
     );
 
@@ -16,7 +16,7 @@ class Instituicao extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.Conta, { foreignKey: 'instituicao_id', as: 'contas' });
+    this.hasMany(models.Conta, { foreignKey: "instituicao_id", as: "contas" });
   }
 }
 
