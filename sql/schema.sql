@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS usuarios (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS instituicoes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS contas (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+    instituicao_id INTEGER REFERENCES instituicoes(id) ON DELETE CASCADE,
+    saldo NUMERIC(12,2) DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS transacoes (
+    id SERIAL PRIMARY KEY,
+    conta_id INTEGER REFERENCES contas(id) ON DELETE CASCADE,
+    tipo VARCHAR(10) CHECK (tipo IN ('credito', 'debito')) NOT NULL,
+    valor NUMERIC(12,2) NOT NULL,
+    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
