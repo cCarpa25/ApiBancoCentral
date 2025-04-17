@@ -8,10 +8,12 @@ class Instituicao extends Model {
       },
       {
         sequelize,
+        modelName: "Instituicao",
         tableName: "instituicoes",
+        timestamps: true,
+        underscored: true,
       }
     );
-
     return this;
   }
 

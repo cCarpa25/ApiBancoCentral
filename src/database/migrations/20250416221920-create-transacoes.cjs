@@ -10,14 +10,14 @@ module.exports = {
         allowNull: false,
       },
       tipo: {
-        type: Sequelize.ENUM("credito", "debito"),
+        type: Sequelize.ENUM("debito", "credito"),
         allowNull: false,
       },
       valor: {
         type: Sequelize.DECIMAL,
         allowNull: false,
       },
-      descricao: {
+      description: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -31,19 +31,17 @@ module.exports = {
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
       updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    // Remover o ENUM manualmente para evitar erro ao refazer migrations
     await queryInterface.dropTable("transacoes");
-    await queryInterface.sequelize.query(
-      'DROP TYPE IF EXISTS "enum_transacoes_tipo";'
-    );
   },
 };
