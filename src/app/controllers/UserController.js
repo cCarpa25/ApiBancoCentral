@@ -1,36 +1,75 @@
-import User from "../models/User.js";
+import Instituicao from "../models/Instituicao.js";
 
-export default class UserController {
-  static async store(req, res) {
+class InstituicaoController {
+  // Lista todas as instituições
+  async index(req, res) {
     try {
-      const data = req.body;
-
-      const schema = Yup.object().shape({
-        name: Yup.string().required(),
-        email: Yup.string().email().required(),
-        password: Yup.string().min(8).required(),
-      });
-
-      if (!(await schema.isValid(data))) {
-        res.status(400).send({ message: "Falha na Validação" });
-      }
-
-      const userExists = await User.findOne({ where: { email: data.email } });
-
-      if (userExists) {
-        res
-          .status(400)
-          .send({ message: "Já Existe um Usuário com esse email" });
-      }
-
-      const { name, email, password } = data;
-      const newUser = { name, email, password };
-
-      await User.create(newUser);
-
-      res.status(200).send({ message: "Usuário Criado com Sucesso" });
+      const instituicoes = await Instituicao.findAll();
+      return res.status(200).json(instituicoes);
     } catch (error) {
-      res.status(500).send({ message: error.message });
+      return res.status(500).json({ error: "Erro ao listar instituições." });
+    }
+  }
+
+  // Mostra uma instituição específica
+  async show(req, res) {
+    const { id } = req.params;
+    try {
+      const instituicao = await Instituicao.findByPk(id);
+      if (!instituicao) {
+        return res.status(404).json({ error: "Instituição não encontrada." });
+      }
+      return res.status(200).json(instituicao);
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao buscar instituição." });
+    }
+  }
+
+  // Cria uma nova instituição
+  async store(req, res) {
+    const { nome } = req.body;
+    try {
+      const instituicao = await Instituicao.create({ nome });
+      return res.status(201).json(instituicao);
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao criar instituição." });
+    }
+  }
+
+  // Atualiza uma instituição
+  async update(req, res) {
+    const { id } = req.params;
+    const { nome } = req.body;
+
+    try {
+      const instituicao = await Instituicao.findByPk(id);
+      if (!instituicao) {
+        return res.status(404).json({ error: "Instituição não encontrada." });
+      }
+
+      await instituicao.update({ nome });
+      return res.status(200).json(instituicao);
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao atualizar instituição." });
+    }
+  }
+
+  // Deleta uma instituição
+  async delete(req, res) {
+    const { id } = req.params;
+
+    try {
+      const instituicao = await Instituicao.findByPk(id);
+      if (!instituicao) {
+        return res.status(404).json({ error: "Instituição não encontrada." });
+      }
+
+      await instituicao.destroy();
+      return res.status(204).send(); // Sem conteúdo
+    } catch (error) {
+      return res.status(500).json({ error: "Erro ao deletar instituição." });
     }
   }
 }
+
+export default new InstituicaoController();
