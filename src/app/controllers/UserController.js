@@ -1,75 +1,91 @@
-import Instituicao from "../models/Instituicao.js";
+// src/app/controllers/UserController.js
+import User from "../models/User.js";
 
-class InstituicaoController {
-  // Lista todas as instituições
+class UserController {
+  // Lista todos os usuários
   async index(req, res) {
     try {
-      const instituicoes = await Instituicao.findAll();
-      return res.status(200).json(instituicoes);
+      const users = await User.findAll();
+      return res.status(200).json(users);
     } catch (error) {
-      return res.status(500).json({ error: "Erro ao listar instituições." });
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao listar usuários." });
     }
   }
 
-  // Mostra uma instituição específica
+  // Mostra um usuário específico
   async show(req, res) {
     const { id } = req.params;
     try {
-      const instituicao = await Instituicao.findByPk(id);
-      if (!instituicao) {
-        return res.status(404).json({ error: "Instituição não encontrada." });
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
       }
-      return res.status(200).json(instituicao);
+      return res.status(200).json(user);
     } catch (error) {
-      return res.status(500).json({ error: "Erro ao buscar instituição." });
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao buscar usuário." });
     }
   }
 
-  // Cria uma nova instituição
+  // Cria um novo usuário
   async store(req, res) {
-    const { nome } = req.body;
+    const { name, email, password } = req.body;
+  
     try {
-      const instituicao = await Instituicao.create({ nome });
-      return res.status(201).json(instituicao);
+      // Criação do novo usuário
+      const user = await User.create({
+        name,
+        email,
+        password,
+      });
+  
+      // Resposta personalizada com a mensagem de sucesso
+      return res.status(201).json({ message: "Usuário criado com sucesso" });
     } catch (error) {
-      return res.status(500).json({ error: "Erro ao criar instituição." });
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao criar usuário." });
     }
   }
 
-  // Atualiza uma instituição
+  // Atualiza um usuário
   async update(req, res) {
     const { id } = req.params;
-    const { nome } = req.body;
+    const { name, email, password } = req.body;
 
     try {
-      const instituicao = await Instituicao.findByPk(id);
-      if (!instituicao) {
-        return res.status(404).json({ error: "Instituição não encontrada." });
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
       }
 
-      await instituicao.update({ nome });
-      return res.status(200).json(instituicao);
+      // Atualiza o usuário
+      await user.update({ name, email, password });
+      return res.status(200).json(user); // Retorna o usuário atualizado
     } catch (error) {
-      return res.status(500).json({ error: "Erro ao atualizar instituição." });
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao atualizar usuário." });
     }
   }
 
-  // Deleta uma instituição
+  // Deleta um usuário
   async delete(req, res) {
     const { id } = req.params;
 
     try {
-      const instituicao = await Instituicao.findByPk(id);
-      if (!instituicao) {
-        return res.status(404).json({ error: "Instituição não encontrada." });
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
       }
 
-      await instituicao.destroy();
-      return res.status(204).send(); // Sem conteúdo
+      // Deleta o usuário
+      await user.destroy();
+      return res.status(204).send(); // Sem conteúdo, apenas confirmação
     } catch (error) {
-      return res.status(500).json({ error: "Erro ao deletar instituição." });
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao deletar usuário." });
     }
   }
 }
 
-export default new InstituicaoController();
+export default new UserController();
