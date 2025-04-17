@@ -42,10 +42,19 @@ class ContaController {
 
   // Obter saldo por instituição
   async saldoPorInstituicao(req, res) {
-    const { usuario_id, instituicao_id } = req.params;
+    const { id } = req.params; // Pega o ID do usuário
+    const { instituicao } = req.query; // Pega o nome da instituição da query string
+    
     try {
-      const contas = await Conta.findAll({ where: { usuario_id, instituicao_id } });
+      const instituicaoData = await Instituicao.findOne({ where: { nome: instituicao } });
+  
+      if (!instituicaoData) {
+        return res.status(404).json({ error: "Instituição não encontrada." });
+      }
+  
+      const contas = await Conta.findAll({ where: { usuario_id: id, instituicao_id: instituicaoData.id } });
       const saldoPorInstituicao = contas.reduce((total, conta) => total + conta.saldo, 0);
+      
       return res.status(200).json({ saldoPorInstituicao });
     } catch (error) {
       console.error(error);
@@ -70,12 +79,21 @@ class ContaController {
 
   // Filtrar extrato por instituição
   async extratoPorInstituicao(req, res) {
-    const { usuario_id, instituicao_id } = req.params;
+    const { id } = req.params; // Pega o ID do usuário
+    const { instituicao } = req.query; // Pega a instituição da query string
+    
     try {
-      const contas = await Conta.findAll({ where: { usuario_id, instituicao_id } });
+      const instituicaoData = await Instituicao.findOne({ where: { nome: instituicao } });
+  
+      if (!instituicaoData) {
+        return res.status(404).json({ error: "Instituição não encontrada." });
+      }
+  
+      const contas = await Conta.findAll({ where: { usuario_id: id, instituicao_id: instituicaoData.id } });
       const transacoes = await Promise.all(
         contas.map(conta => conta.getTransacoes())
       );
+  
       return res.status(200).json({ transacoes });
     } catch (error) {
       console.error(error);

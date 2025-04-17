@@ -21,15 +21,15 @@ routes.put('/instituicoes/:id', InstituicaoController.update);  // Atualizar
 routes.delete('/instituicoes/:id', InstituicaoController.delete); // Remover
 
 // Contas
-routes.post('/contas', ContaController.store); // Criar conta
+routes.post('/users/:usuario_id/contas', ContaController.store); // Criar conta para usuário
 
-routes.get('/saldos/:usuario_id', ContaController.saldoTotal); // Saldo total do usuário
-routes.get('/saldos/:usuario_id/instituicao/:instituicao_id', ContaController.saldoPorInstituicao); // Saldo por instituição
+// Saldo total ou por instituição (usando query string)
+routes.get('/users/:usuario_id/saldo', ContaController.saldoTotal);
 
-routes.get('/extrato/:usuario_id', ContaController.extratoCompleto); // Extrato completo
-routes.get('/extrato/:usuario_id/instituicao/:instituicao_id', ContaController.extratoPorInstituicao); // Extrato por instituição
+// Extrato completo ou por instituição (usando query string)
+routes.get('/users/:usuario_id/extrato', ContaController.extratoCompleto);
 
 // Transações
-routes.post('/transacoes', TransacaoController.store); // Criar transação
+routes.post('/users/:usuario_id/transacoes', TransacaoController.store); // Criar transação para usuário
 
 export default routes;
