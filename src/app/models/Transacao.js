@@ -1,22 +1,30 @@
-import Sequelize, { Model } from "sequelize";
+// src/app/models/Transacao.js
+import { Model, DataTypes } from "sequelize";
 
 class Transacao extends Model {
   static init(sequelize) {
-    super.init(
+    return super.init(
       {
-        tipo: Sequelize.ENUM("debito", "credito"),
-        valor: Sequelize.DECIMAL,
-        description: Sequelize.STRING,
+        tipo: {
+          type: DataTypes.ENUM("credito", "debito"),
+          allowNull: false,
+        },
+        valor: {
+          type: DataTypes.FLOAT,
+          allowNull: false,
+        },
+        conta_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
       },
       {
         sequelize,
         modelName: "Transacao",
         tableName: "transacoes",
         timestamps: true,
-        underscored: true,
       }
     );
-    return this;
   }
 
   static associate(models) {

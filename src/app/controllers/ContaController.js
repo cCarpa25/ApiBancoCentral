@@ -1,95 +1,85 @@
+// src/app/controllers/ContaController.js
 import Conta from "../models/Conta.js";
-import User from "../models/User.js";
 import Instituicao from "../models/Instituicao.js";
+import User from "../models/User.js";
 
 class ContaController {
-  // Listar todas as contas
-  async index(req, res) {
+  // Cadastrar uma nova conta
+  async store(req, res) {
+    const { usuario_id, instituicao_id } = req.body;
     try {
-      const contas = await Conta.findAll({
-        include: [
-          { model: User, as: "user", attributes: ["id", "nome", "email"] },
-          { model: Instituicao, as: "instituicao", attributes: ["id", "nome"] },
-        ],
-      });
-      return res.status(200).json(contas);
-    } catch (error) {
-      return res.status(500).json({ error: "Erro ao listar contas." });
-    }
-  }
+      const user = await User.findByPk(usuario_id);
+      const instituicao = await Instituicao.findByPk(instituicao_id);
 
-  // Buscar conta por ID
-  async show(req, res) {
-    const { id } = req.params;
-
-    try {
-      const conta = await Conta.findByPk(id, {
-        include: [
-          { model: User, as: "user", attributes: ["id", "nome", "email"] },
-          { model: Instituicao, as: "instituicao", attributes: ["id", "nome"] },
-        ],
-      });
-
-      if (!conta) {
-        return res.status(404).json({ error: "Conta não encontrada." });
+      if (!user || !instituicao) {
+        return res.status(404).json({ error: "Usuário ou Instituição não encontrados." });
       }
 
-      return res.status(200).json(conta);
+      const conta = await Conta.create({ usuario_id, instituicao_id: instituicao.id });
+      return res.status(201).json({
+        id: conta.id,
+        usuario_id: conta.usuario_id,
+        instituicao_id: conta.instituicao_id
+      });
     } catch (error) {
-      return res.status(500).json({ error: "Erro ao buscar conta." });
-    }
-  }
-
-  // Criar uma nova conta
-  async store(req, res) {
-    const { saldo, usuario_id, instituicao_id } = req.body;
-
-    if (saldo === undefined || usuario_id === undefined || instituicao_id === undefined) {
-      return res.status(400).json({ error: "Saldo, usuário e instituição são obrigatórios." });
-    }
-
-    try {
-      const conta = await Conta.create({ saldo, usuario_id, instituicao_id });
-
-      return res.status(201).json({ mensagem: "Conta criada com sucesso!" });
-    } catch (error) {
+      console.error(error);
       return res.status(500).json({ error: "Erro ao criar conta." });
     }
   }
 
-  // Atualizar uma conta
-  async update(req, res) {
-    const { id } = req.params;
-    const { saldo } = req.body;
-
+  // Obter saldo total de um usuário
+  async saldoTotal(req, res) {
+    const { usuario_id } = req.params;
     try {
-      const conta = await Conta.findByPk(id);
-      if (!conta) {
-        return res.status(404).json({ error: "Conta não encontrada." });
-      }
-
-      await conta.update({ saldo });
-
-      return res.status(200).json({ mensagem: "Conta atualizada com sucesso!" });
+      const contas = await Conta.findAll({ where: { usuario_id } });
+      const saldoTotal = contas.reduce((total, conta) => total + conta.saldo, 0);
+      return res.status(200).json({ saldoTotal });
     } catch (error) {
-      return res.status(500).json({ error: "Erro ao atualizar conta." });
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao obter saldo total." });
     }
   }
 
-  // Deletar uma conta
-  async delete(req, res) {
-    const { id } = req.params;
-
+  // Obter saldo por instituição
+  async saldoPorInstituicao(req, res) {
+    const { usuario_id, instituicao_id } = req.params;
     try {
-      const conta = await Conta.findByPk(id);
-      if (!conta) {
-        return res.status(404).json({ error: "Conta não encontrada." });
-      }
-
-      await conta.destroy();
-      return res.status(204).send();
+      const contas = await Conta.findAll({ where: { usuario_id, instituicao_id } });
+      const saldoPorInstituicao = contas.reduce((total, conta) => total + conta.saldo, 0);
+      return res.status(200).json({ saldoPorInstituicao });
     } catch (error) {
-      return res.status(500).json({ error: "Erro ao deletar conta." });
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao obter saldo por instituição." });
+    }
+  }
+
+  // Obter extrato completo do usuário
+  async extratoCompleto(req, res) {
+    const { usuario_id } = req.params;
+    try {
+      const contas = await Conta.findAll({ where: { usuario_id } });
+      const transacoes = await Promise.all(
+        contas.map(conta => conta.getTransacoes())
+      );
+      return res.status(200).json({ transacoes });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao obter extrato." });
+    }
+  }
+
+  // Filtrar extrato por instituição
+  async extratoPorInstituicao(req, res) {
+    const { usuario_id, instituicao_id } = req.params;
+    try {
+      const contas = await Conta.findAll({ where: { usuario_id, instituicao_id } });
+      const transacoes = await Promise.all(
+        contas.map(conta => conta.getTransacoes())
+      );
+      return res.status(200).json({ transacoes });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao obter extrato por instituição." });
     }
   }
 }
