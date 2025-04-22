@@ -17,11 +17,11 @@ Antes de começar, tenha instalado:
 
 # Clone o repositório
 ```bash
-git clone <url-do-repositorio>
+git clone (https://github.com/cCarpa25/ApiBancoCentral.git)
 ```
 # Acesse a pasta do projeto
 ```bash
-cd nome-do-repositorio
+cd ApiBancoCentral
 ```
 # Crie o arquivo .env com o conteúdo abaixo:
 ```
