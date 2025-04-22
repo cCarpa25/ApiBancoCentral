@@ -15,13 +15,14 @@ Antes de começar, tenha instalado:
 
 ## 🚀 Como rodar o projeto
 
-```bash
 # Clone o repositório
+```bash
 git clone <url-do-repositorio>
-
+```
 # Acesse a pasta do projeto
+```bash
 cd nome-do-repositorio
-
+```
 # Crie o arquivo .env com o conteúdo abaixo:
 ```
 
