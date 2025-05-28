@@ -25,8 +25,6 @@ cd ApiBancoCentral
 ```
 # Crie o arquivo .env com o conteúdo abaixo:
 ```
-
-```
 SERVER_PORT=3000
 
 DB_HOST=localhost
@@ -41,13 +39,13 @@ DB_NAME=minibanco
 ```bash
 npm install
 ```
-# Rode as migrations
-```bash
-npx sequelize-cli db:migrate
-```
 # Suba o banco de dados com Docker
 ```bash
 docker-compose up -d
+```
+# Rode as migrations
+```bash
+npx sequelize-cli db:migrate
 ```
 # Inicie o servidor em ambiente de desenvolvimento
 ```bash
@@ -60,10 +58,19 @@ npm run dev
 
 Você pode usar o Insomnia (ou Postman) para testar as seguintes rotas:
 
-### 1. Criar uma nova instituição
+Rota raiz (teste básico)
 
 ```
-POST /instituicoes
+GET /
+```
+Retorna a mensagem:
+API Mini Banco Central está no ar!
+
+
+### 1. Criar uma nova instituição
+POST
+```
+http://localhost:3000/instituicoes 
 ```
 
 **Body (JSON):**
@@ -74,49 +81,52 @@ POST /instituicoes
 }
 ```
 
----
-
-### 2. Criar uma conta para um usuário
-
+### 2. Criar um usuário
+POST
 ```
-POST /usuarios/:id/contas
+http://localhost:3000/users 
 ```
-
-**Parâmetro na URL:**  
-`id` do usuário
-
 **Body (JSON):**
 ```json
 {
-  "instituicao_id": 1,
-  "tipo": "corrente",
-  "saldo_inicial": 1000
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "password": "minhasenha123"
+}
+```
+### 3. Criar uma conta para um usuário
+POST
+```
+http://localhost:3000/users/:usuario_id/contas
+```
+**Body (JSON):**
+```json
+{
+  "saldo_inicial": 1000,
+  "usuario_id": 5,
+	"instituicao_id": 1
 }
 ```
 
 ---
 
-### 3. Registrar uma transação
-
+### 4. Registrar uma transação
+POST
 ```
-POST /usuarios/:id/transacoes
+//localhost:3000/users/:usuario_id/transacoes
 ```
-
-**Parâmetro na URL:**  
-`id` do usuário
-
 **Body (JSON):**
 ```json
 {
-  "conta_id": 1,
-  "tipo": "deposito",
-  "valor": 200
+	"tipo": "credito",
+	"valor": 200,
+	"conta_id": 1
 }
 ```
 
 ---
 
-### 4. Consultar o saldo do usuário
+### 5. Consultar o saldo do usuário
 
 ```
 GET /usuarios/:id/saldo
@@ -127,7 +137,7 @@ GET /usuarios/:id/saldo
 
 ---
 
-### 5. Consultar extrato do usuário
+### 6. Consultar extrato do usuário
 
 ```
 GET /usuarios/:id/extrato
@@ -135,19 +145,6 @@ GET /usuarios/:id/extrato
 
 **Parâmetro na URL:**  
 `id` do usuário
-
----
-
-### 6. Rota raiz (teste básico)
-
-```
-GET /
-```
-
-Retorna a mensagem:
-```
-API Mini Banco Central está no ar!
-```
 
 ---
 
